@@ -5,16 +5,22 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 
+/**
+ * 조건 두개를 놓쳐서 고생했다
+ * 1. 적이 한 칸씩 이동할 때마다 궁수를 새롭게 배치한 것 -> 한 번 배치하면 끝날때까지 진행
+ * 2. 같은 적을 쏠 수 있다 는 조건을 빼먹음
+ *
+ * 문제 정독 5회 이상 해야할 것 같다 ,,,,,
+ */
 public class Main {
-
     static int N,M,D;
     static ArrayList<Integer> comb; // 조합 저장
     static int[][] graph;
     static int[][] savedGraph; // 불변 그래프 (초기 입력 상태 그대로 유지)
-    static int Enemy;
-    static int catchEnemy;
-    static int disappear;
-    static int Max;
+    static int Enemy; // 총 적의 수
+    static int catchEnemy; // 잡은 적의 수
+    static int disappear; // 사라진 적의 수
+    static int Max; // catchEnemy 의 최댓값 저장
 
     public static void main(String[] args) throws IOException{
 
@@ -38,7 +44,6 @@ public class Main {
             }
         } // 그래프 입력 , 적의 수 세기
 
-        // 3 자리 선택하여 공격하는 턴을 반복함, 모든 적이 사라질 때까지
         Max=0;
         combination(0);
         System.out.println(Max);
@@ -47,30 +52,20 @@ public class Main {
 
     static void combination(int cnt){
         if(cnt==3){ // MC3 수행 완료 -> 그 조합으로 게임 한 판 돌려보기
-
             catchEnemy=0;
             disappear=0;
-     //       System.out.println("새 조합");
 
-            for(int i=0;i<N;i++) for(int j=0;j<M;j++) graph[i][j]=savedGraph[i][j];
+            for(int i=0;i<N;i++) for(int j=0;j<M;j++) graph[i][j]=savedGraph[i][j]; // 매 반복시마다 그래프 원복 
 
             while(true){
                 ArrayList<int[]> result=bfs();
                 // 이번 턴에서 잡을 수 있는 최대 수 적의 좌표가 result 에 저장되어 있음
                 // 그 값들을 0으로 바꿔주고 배열 한칸씩 밀어주는 작업 수행하기 (moveEnemy 메서드)
                 moveEnemy(result);
-//                System.out.println("catch:"+catchEnemy);
-//                System.out.println("disappear: "+disappear);
-//                if(catchEnemy==14) {
-//                    System.out.println("다 잡아땅");
-//                    System.out.println("사라진 녀석: "+disappear);
-//                    break;
-//                }
                 if(catchEnemy+disappear==Enemy) break; // 종료
             }
 
             if(catchEnemy>Max) Max=catchEnemy;
-
             return;
         }
 
@@ -87,14 +82,12 @@ public class Main {
         // comb 배열에 시작 y 좌표 저장되어 있음
 
         Deque<int[]> queue=new ArrayDeque<>();
-        boolean[][] isAttacked=new boolean[N][M];
         int[] dx={0,-1,0};
         int[] dy={-1,0,1}; // 왼위오
         int currX,currY,xx,yy;
         int[][] depth;
         ArrayList<int[]> catchedEnemy=new ArrayList<>(); // 이번 턴에 잡은 적
         boolean flag;
-
 
         for(int i=0;i<3;i++){ // 각각 궁수 좌표를 시작점으로 두고 3회 반복하여 잡을 수 있는 적 찾기
             queue.clear();
@@ -117,9 +110,8 @@ public class Main {
 
                     if(currX<0 || currX>=N || currY<0 || currY>=M) continue;
 
-                    if(graph[currX][currY]==1/* && !isAttacked[currX][currY]*/){
+                    if(graph[currX][currY]==1){
                         catchedEnemy.add(new int[]{currX,currY});
-                        //isAttacked[currX][currY]=true;
                         flag=true;
                         break;
                     } // 적 하나 잡으면 끝남
@@ -132,15 +124,10 @@ public class Main {
             }
         }
 
-//        for(int i=0;i<catchedEnemy.size();i++){
-//            System.out.print(catchedEnemy.get(i)[0]+","+catchedEnemy.get(i)[1]);
-//            System.out.println();
-//        }
-//        System.out.println();
         return catchedEnemy;
     }
 
-    static void moveEnemy(ArrayList<int[]> tempEnemy){ // 잡은 적들 값을 0으로 바꿔주고, 배열을 한칸씩 아래로 밀기 ,,
+    static void moveEnemy(ArrayList<int[]> tempEnemy){ // 잡은 적들 값을 0으로 바꿔주고, 배열을 한칸씩 아래로 밀기 
         // catchEnemy + , disappearEnemy -
 
         for(int i=0;i<tempEnemy.size();i++){
@@ -149,10 +136,7 @@ public class Main {
                 graph[pop[0]][pop[1]]=0;
                 catchEnemy+=1;
             } // 동일한 적을 잡을 수도 있으니까
-          //  System.out.println("잡은 적 !! : "+pop[0]+","+pop[1]);
         } // 잡은 적들은 기존 그래프에서 0으로 바꾸기
-
-    //    System.out.println();
 
         for(int j=0;j<M;j++){
             if(graph[N-1][j]==1) disappear+=1;
@@ -164,11 +148,6 @@ public class Main {
             }
         } // 한칸씩 아래로 밀기
 
-        for(int j=0;j<M;j++) graph[0][j]=0;
-
-
-//        System.out.println(catchEnemy);
-//        System.out.println(disappear);
-//        System.out.println();
+        for(int j=0;j<M;j++) graph[0][j]=0; // 1행 0으로
     }
 }
