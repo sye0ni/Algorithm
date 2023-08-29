@@ -11,12 +11,12 @@ public class Main {
 		int[] dp=new int[1000001]; 
 		
 		dp[1]=0;
-		dp[2]=1;
-		dp[3]=1;
+//		dp[2]=1;
+//		dp[3]=1;
 		
 		int a,b,c;
 	
-		for(int i=4;i<=n;i++) {
+		for(int i=2;i<=n;i++) {
 			a=0;
 			b=0;
 			
