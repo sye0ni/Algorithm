@@ -4,35 +4,35 @@ import java.io.InputStreamReader;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException{
-        BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-        int n,m;
-        StringBuilder sb=new StringBuilder();;
-        int[][] dp;
-        int t=Integer.parseInt(br.readLine());
-        String[] str;
+	public static void main(String[] args) throws IOException{
+		BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+		int T=Integer.parseInt(br.readLine());
+		String[] temp;
+		int west,east;
+		
+		for(int i=1;i<=T;i++) {
+			temp=br.readLine().split(" ");
+			west=Integer.parseInt(temp[0]);
+			east=Integer.parseInt(temp[1]);
+			buildBridge(west,east);
+		}
 
-        for(int k=0;k<t;k++) {
-            str=br.readLine().split(" ");
-            n=Integer.parseInt(str[0]);
-            m=Integer.parseInt(str[1]);
-
-            dp=new int[m+1][n+1]; // dp[x][y] 에는 xCy 의 값이 저장
-
-            for(int i=1;i<=m;i++){
-                for(int j=0;j<=n;j++){
-                    if(i<j) continue;
-                    if(j==0 || i==j){
-                        dp[i][j]=1;
-                        continue;
-                    }
-                    dp[i][j]=dp[i-1][j-1]+dp[i-1][j];
-                }
-            }
-            System.out.println(dp[m][n]);
-
-        }
-    }
-
+	}
+	
+	static void buildBridge(int west,int east) {
+		
+		int[][] combination=new int[east+1][west+1];
+		
+		// iCj
+		for(int i=1;i<=east;i++) {
+			for(int j=0;j<=west;j++) {
+				if(j==0 || i==j) combination[i][j]=1;
+				else if(j==1) combination[i][j]=i;
+				else combination[i][j]=combination[i-1][j-1]+combination[i-1][j];
+			}
+		}
+		
+		System.out.println(combination[east][west]);
+	}
 
 }
