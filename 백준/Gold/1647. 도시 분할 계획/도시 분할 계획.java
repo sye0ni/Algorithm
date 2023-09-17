@@ -28,6 +28,7 @@ public class Main {
         }
     }
 
+    static PriorityQueue<Edge> pq;
     static Edge[] list;
     static long sum;
     static int N; // 정점 수
@@ -43,7 +44,7 @@ public class Main {
 
         int s,e,w;
         sum=0; // mst 최종 비용 저장
-//        pq=new PriorityQueue<>();
+        pq=new PriorityQueue<>();
         parent=new int[N];
         list=new Edge[M];
 
@@ -54,11 +55,11 @@ public class Main {
             s=Integer.parseInt(st.nextToken())-1;
             e=Integer.parseInt(st.nextToken())-1;
             w=Integer.parseInt(st.nextToken());
-//            pq.add(new Edge(s,e,w));
-            list[i]=new Edge(s,e,w);
+            pq.add(new Edge(s,e,w));
+//            list[i]=new Edge(s,e,w);
         } // 입력 완료
 
-        Arrays.sort(list);
+//        Arrays.sort(list);
         kruskal();
         System.out.println(sum);
     }
@@ -68,7 +69,8 @@ public class Main {
         Edge pop;
 
         for(int i=0;i<M;i++){
-            pop=list[i];
+//            pop=list[i];
+            pop=pq.poll();
             if(find(pop.to)==find(pop.from)) continue;
 
             union(pop.to,pop.from);
