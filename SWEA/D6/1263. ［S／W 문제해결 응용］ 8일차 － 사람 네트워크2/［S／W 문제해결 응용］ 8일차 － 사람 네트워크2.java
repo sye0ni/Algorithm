@@ -26,10 +26,6 @@ public class Solution {
             for(int i=0;i<n;i++){
                 for(int j=0;j<n;j++){
                     graph[i][j]=Integer.parseInt(st.nextToken());
-                    if(i==j) continue;
-                    if(graph[i][j]==0) {
-                        graph[i][j]=inf;
-                    }
                 }
             } // 그래프 생성
 
@@ -38,13 +34,18 @@ public class Solution {
                 for(int i=0;i<n;i++){
                     for(int j=0;j<n;j++){
                         if(k==i || k==j || i==j) continue;
-                        if(graph[i][k]==inf || graph[k][j]==inf) continue;
-                        graph[i][j]=Math.min(graph[i][k]+graph[k][j],graph[i][j]);
+                        if(graph[i][k]>0 && graph[k][j]>0){
+                            if(graph[i][j]==0){
+                                graph[i][j]=graph[i][k]+graph[k][j];
+                            }
+                            else{
+                                graph[i][j]=Math.min(graph[i][k]+graph[k][j],graph[i][j]);
+                            }
+                        }
                     }
                 }
             }
 
-            int MinIdx=0;
             int min=Integer.MAX_VALUE;
             int cnt=0;
             for(int j=0;j<n;j++){
