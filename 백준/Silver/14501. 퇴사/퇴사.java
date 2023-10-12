@@ -1,57 +1,44 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
-
-/**
- * 아이디어 : dp
- * dp[i][0] : i 번째 날에 진행한 상담이 끝나는 날짜
- * dp[i][1] : i 번째 날의 상담을 할 때 상담 수익의 최대 값
- *
- * 대략 n*2 만큼의 시간이 소요되지만 n의 크기가 작아서 가능하다
- *
- */
+import java.util.StringTokenizer;
 
 public class Main {
+    static int N;
+    static int[] T;
+    static int[] P;
+    static int maxProfit;
 
     public static void main(String[] args) throws IOException {
-        BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-        int N=Integer.parseInt(br.readLine());
-        int[][] dp;
-        int t,p,max;
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(br.readLine());
+        T = new int[N];
+        P = new int[N];
+        maxProfit = 0;
 
-        dp=new int[N][2];
-
-        for(int i=0;i<N;i++){
-            st=new StringTokenizer(br.readLine()," ");
-            t=Integer.parseInt(st.nextToken());
-            p=Integer.parseInt(st.nextToken());
-            max=0;
-
-            for(int j=0;j<i;j++){
-                if(dp[j][0]<i){
-                    if(dp[j][1]>max){
-                        max=dp[j][1];
-                    }
-                }
-            }
-
-            dp[i][0]=i+t-1;
-            if(dp[i][0]<N){ // 지금 회의를 진행할 수 있을 때에만 값 지정
-                dp[i][1]=max+p;
-            }
-        } // dp 배열 생성 완료
-
-        max=0;
-        for(int i=0;i<N;i++){
-            if(dp[i][1]>max){
-                max=dp[i][1];
-            }
+        for (int i = 0; i < N; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            T[i] = Integer.parseInt(st.nextToken());
+            P[i] = Integer.parseInt(st.nextToken());
         }
 
-        System.out.println(max);
+        dfs(0, 0);
+
+        System.out.println(maxProfit);
     }
 
+    static void dfs(int day, int profit) {
+        if (day >= N) {
+            maxProfit = Math.max(maxProfit, profit);
+            return;
+        }
 
+        // 현재 날짜에서 상담을 수락하는 경우
+        if (day + T[day] <= N) {
+            dfs(day + T[day], profit + P[day]);
+        }
+
+        // 현재 날짜에서 상담을 수락하지 않는 경우
+        dfs(day + 1, profit);
+    }
 }
