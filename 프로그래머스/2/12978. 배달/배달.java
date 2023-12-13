@@ -26,21 +26,23 @@ class Solution {
         
         int pop;
         int[] temp;
+        boolean[] visited=new boolean[N];
         while(!pq.isEmpty()){
             pop=pq.poll();
-
+            
+            if(visited[pop]) continue;
+            visited[pop]=true;
+            
+            
             for(int i=0;i<graph[pop].size();i++){
                 temp=graph[pop].get(i); // 도착지, 거리 담겨있음 
+                
                 
                 if(distance[temp[0]] > temp[1]+distance[pop]){
                     distance[temp[0]]= temp[1]+distance[pop]; 
                     pq.add(temp[0]);
                 }
                 
-//                 if(!visited[temp[0]]){
-//                     visited[temp[0]]=true;
-//                     pq.add(temp[0]);
-//                 }
             }
         }
         
