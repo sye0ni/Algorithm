@@ -64,7 +64,52 @@ public class Main {
                 if(lastCol=='B') blue--;
             }
             answer=Math.min(red,blue);
+        }   // 앞에서부터
+
+        // 뒤에서부터 add
+        stack.clear();
+        red=0;
+        redG=1;
+        blue=0;
+        blueG=1;
+
+        for(int i=str.length()-1;i>=0;i--){
+            if(str.charAt(i)=='R'){ // red
+                if(i==str.length()-1 || str.charAt(i+1)=='R'){
+                    stack.addLast(new ball('R',redG));
+                }
+                else{
+                    stack.addLast(new ball('R',++redG));
+                }
+                red++;
+            }
+            else{ // blue
+                if(i==str.length()-1 || str.charAt(i+1)=='B'){
+                    stack.addLast(new ball('B',blueG));
+                }
+                else{
+                    stack.addLast(new ball('B',++blueG));
+                }
+                blue++;
+            }
         }
-        System.out.println(answer);
+        top=stack.removeLast();
+        lastCol=top.color;
+        lastGn=top.gNum;
+        int answer2=0;
+        if(lastCol=='R') red--;
+        if(lastCol=='B') blue--;
+
+        if(lastGn>1){
+            while(true){
+                top=stack.removeLast();
+                if(top.color!=lastCol || top.gNum!=lastGn) break;
+                if(lastCol=='R') red--;
+                if(lastCol=='B') blue--;
+            }
+            answer2=Math.min(red,blue);
+        }
+
+        System.out.println(Math.min(answer,answer2));
     }
 }
