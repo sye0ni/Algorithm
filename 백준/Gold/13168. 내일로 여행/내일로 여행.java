@@ -4,7 +4,11 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 /**
+ * 21540 kb, 444 ms
  * 모든 점 사이의 최단 경로를 구하는 floyd warshall
+ *
+ * 실수 처리 때문에 2.0 으로 나눠야 하는데 2로 나눠서 몇시간을 ,, ㅠ _ ㅠ
+ *
  */
 public class Main {
 
@@ -27,11 +31,14 @@ public class Main {
 
         st=new StringTokenizer(br.readLine());
 
+        int index=0;
         for(int i=0;i<N;i++) {
             String name=st.nextToken();
-            cityNum.put(name,i);
+            if(cityNum.get(name)==null)
+                cityNum.put(name,index++);
         }   // 도시 입력 받고 고유 번호 지정하여 저장
 
+        N=cityNum.size();
         distance=new double[N][N];
         distanceNaeilro=new double[N][N];
 
