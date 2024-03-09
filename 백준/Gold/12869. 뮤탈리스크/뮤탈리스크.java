@@ -4,8 +4,9 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 /**
+ *  13772 kb, 96 ms
  *  N 의 개수가 1-3 개 이므로, 완탐으로 구한다. => 시간초과
- *  이미 계산한 값에 대해서는 다시 계산할 필요가 없기 때문에 
+ *  이미 계산한 값을 다시 계산할 필요가 없기 때문에 dp 이용
  */
 
 
@@ -32,12 +33,11 @@ public class Main {
                 }
             }
         }
-
-        int result = solve(scv[0], scv[1], scv[2]);
-        System.out.println(result);
+        
+        System.out.println(dfs(scv[0], scv[1], scv[2]));
     }
 
-    static int solve(int a, int b, int c) {
+    static int dfs(int a, int b, int c) {
         if (a <= 0 && b <= 0 && c <= 0) return 0;
 
         if (dp[a][b][c] != -1) return dp[a][b][c];
@@ -48,9 +48,8 @@ public class Main {
             int newA = Math.max(0, a - attacks[i][0]);
             int newB = Math.max(0, b - attacks[i][1]);
             int newC = Math.max(0, c - attacks[i][2]);
-            dp[a][b][c] = Math.min(dp[a][b][c], solve(newA, newB, newC) + 1);
+            dp[a][b][c] = Math.min(dp[a][b][c], dfs(newA, newB, newC) + 1);
         }
-
         return dp[a][b][c];
     }
 }
