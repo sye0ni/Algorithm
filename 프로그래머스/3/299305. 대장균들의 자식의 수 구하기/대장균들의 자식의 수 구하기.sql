@@ -1,0 +1,5 @@
+SELECT ED1.ID, count(ED2.ID) as child_count from ecoli_data ed1
+left JOIN ECOLI_DATA ED2 
+ON ED1.ID=ED2.PARENT_ID 
+GROUP BY ED1.ID
+ORDER BY ED1.ID;
