@@ -1,0 +1,11 @@
+-- grade 테이블에서 year=2022 인 칼럼들 중
+-- emp_no 별로 groupby 해서 score의 sum 구해서 
+-- 최댓값인 사원의 점수 , 사원번호, 
+-- employees 테이블에서 그 사원의 이름, 포지션, 이메일 가져오기 
+
+SELECT SUM(SCORE) AS SCORE, GRADE.EMP_NO AS EMP_NO,
+EMP.EMP_NAME AS EMP_NAME, EMP.POSITION AS POSITION, EMP.EMAIL AS EMAIL 
+FROM HR_GRADE AS GRADE 
+JOIN HR_EMPLOYEES AS EMP
+ON GRADE.EMP_NO=EMP.EMP_NO
+WHERE YEAR=2022 GROUP BY EMP_NO ORDER BY SCORE DESC LIMIT 1;
