@@ -4,8 +4,11 @@ import java.util.*;
 // Map<String, Integer> 로 장르별 재생 횟수 저장 
 // List<Integer> 에 앨범 만들고 배열로 변환하여 반환 
 
-// hashmap 의 value 만 가져오기 -> map.values() -> Collection 반환 
-// key 가져오기 -> map.keySet() -> Set 반환 
+// hashmap 
+// value 추출 -> map.values() -> Collection 반환 
+// key 추출 -> map.keySet() -> Set 반환
+// entry 추출 -> map.entrySet() -> Set 반환 
+// entry의 key,value 추출 -> entry.getKey(), entry.getValue() 
 
 
 class Solution {
@@ -43,31 +46,24 @@ class Solution {
             play=plays[i];
             
             music=new Music(play,i);
-            
-            if(playCountPerGenre.get(genre)==null) {
-                // 장르 추가 
-                playCountPerGenre.put(genre,play);
-                // 음악 추가 
-                PriorityQueue<Music> pq=new PriorityQueue<>();
-                pq.add(music);
-                dictionary.put(genre,pq);
-            } 
-            else {
-                int currPlay=playCountPerGenre.get(genre);
-                playCountPerGenre.replace(genre,currPlay+play); // 재생 시간 추가 
-                PriorityQueue<Music> pq=dictionary.get(genre);  
-                // 음악 추가 
-                pq.add(music);
-                dictionary.replace(genre,pq);
+
+            playCountPerGenre.put(genre, playCountPerGenre.getOrDefault(genre, 0) + play);
+            // 해당 장르의 PriorityQueue를 가져오거나, 없으면 새로 생성
+            PriorityQueue<Music> pq=dictionary.get(genre);
+            if(pq==null) {
+                pq=new PriorityQueue<>();
             }
+            // 음악 추가
+            pq.add(music);
+            dictionary.put(genre,pq);
         }
         
         // 1. 장르별 총 재생 횟수를 기준으로 내림차순 정렬
         List<Map.Entry<String, Integer>> genreRanking = new ArrayList<>(playCountPerGenre.entrySet());
-        genreRanking.sort((a, b) -> b.getValue() - a.getValue());
+        genreRanking.sort((a,b)->b.getValue()-a.getValue());
         
         // 2. 상위 장르부터 해당 장르의 상위 2곡을 앨범에 추가
-        for (Map.Entry<String, Integer> entry : genreRanking) {
+        for (Map.Entry<String, Integer> entry:genreRanking) {
             String currGenre = entry.getKey();
             PriorityQueue<Music> pq = dictionary.get(currGenre);
 
