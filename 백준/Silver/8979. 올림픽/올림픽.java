@@ -57,11 +57,13 @@ public class Main {
         Nation prev=null;
 
         int rank=1;
+        int cnt=0;
         while(!pq.isEmpty()) {
             curr=pq.poll();
+            cnt++;
             if(prev!=null) {
                 if(!checkIfEqual(curr,prev)) { // 동순위 아니면 랭킹 올려주기
-                    rank++;
+                    rank=cnt;
                 }
             }
             if(curr.num==K) {
