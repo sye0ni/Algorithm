@@ -1,69 +1,80 @@
 import java.util.*;
 
-// 최소의 비용으로 모든 섬이 통행 가능하도록 만들기 -> MST 만들기
-// n-1개 이상의 간선 필요 
-// union find 
+// MST 만들기 
 
 class Solution {
+
+    static int[] parents; // 그룹핑 
+    static int answer=0; // 최소비용 저장
+    static PriorityQueue<island> pq;
     
-    int[] parent;
-    
-    
-    class Node implements Comparable<Node> {
-        int x,y,cost;
+    static class island implements Comparable<island> {
         
-        Node(int x,int y,int cost) {
-            this.x=x;
-            this.y=y;
+        int a,b,cost;
+        
+        public island(int a,int b, int cost) {
+            this.a=a;
+            this.b=b;
             this.cost=cost;
         }
         
         @Override
-        public int compareTo(Node node) {
-            return this.cost-node.cost;
-        }
+        public int compareTo(island i) {
+            return this.cost-i.cost;
+        } 
+        
     }
     
     public int solution(int n, int[][] costs) {
+        parents=new int[n];
+        int a,b,c;
+        pq=new PriorityQueue<>(); 
+        island temp;
         
-        parent=new int[n];
-        for(int i=0;i<n;i++) parent[i]=i; // 처음에는 자기 자신이 부모임 
+        for(int i=0;i<n;i++) {  // 초기화 
+            parents[i]=i; 
+        }
         
-        Set<Integer> included=new HashSet<>(); 
-        int answer=0;
-        PriorityQueue<Node> pq=new PriorityQueue<>();
-        
-        for(int i=0;i<costs.length;i++) { // pq 생성 
-            pq.add(new Node(costs[i][0],costs[i][1],costs[i][2]));
+        for(int i=0;i<costs.length;i++) {
+            a=costs[i][0];
+            b=costs[i][1];
+            c=costs[i][2];
+            
+            pq.add(new island(a,b,c)); 
         }
         
         while(!pq.isEmpty()) {
-            Node curr=pq.poll();
-            int x=curr.x;
-            int y=curr.y;
-            int cost=curr.cost;
-            
-            if(find(x)==find(y)) continue;
-            else {
-                union(x,y);
-                answer+=cost;
-            }
-            
+            temp=pq.poll();
+            a=temp.a;
+            b=temp.b;
+            c=temp.cost;
+            if(find(a)==find(b)) continue; // 이미 연결 
+            union(a,b);
+            answer+=c;
         }
+        
         
         return answer;
     }
     
-    int find(int x) {
-        if(x==parent[x]) return x;
-        return find(parent[x]);
+    static void union(int a,int b) { // big -> small 으로 합치기 
+        a=find(parents[a]);
+        b=find(parents[b]);
+        
+        if(a>b) {
+            parents[a]=b;
+        }
+        else {
+            parents[b]=a;
+        }
     }
     
-    void union(int x,int y) { // 더 작은 값으로 합치기 
-        x=find(x);
-        y=find(y);
-        
-        if(x<y) parent[y]=x;
-        else parent[x]=y;
+    static int find(int x) {
+        if(x==parents[x]) {
+            return x;
+        } 
+        return find(parents[x]);
     }
+    
+  
 }
