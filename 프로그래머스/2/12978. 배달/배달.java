@@ -1,55 +1,85 @@
-// 아이디어 - 한 점에서 다른 모든 점까지의 최단거리를 구하기 위해 다익스트라 사용 
-// 우선순위큐 이용하여 구현하기 
-
 import java.util.*;
 
 class Solution {
-    public int solution(int N, int[][] road, int K) {
-        int answer = 0;
+    
+    static class Node implements Comparable<Node> {
+        int n;
+        int dist;
         
-        int[] distance=new int[N]; 
-        Arrays.fill(distance,Integer.MAX_VALUE);
-        distance[0]=0; // 시작점 초기화 
-        
-        // 그래프 생성 
-        List<int[]>[] graph=new ArrayList[N];
-        for(int i=0;i<N;i++) graph[i]=new ArrayList<>();
-        
-        for(int i=0;i<road.length;i++){
-            graph[road[i][0]-1].add(new int[]{road[i][1]-1,road[i][2]});
-            graph[road[i][1]-1].add(new int[]{road[i][0]-1,road[i][2]});
+        public Node (int n,int dist) {
+            this.n=n;
+            this.dist=dist;
         }
         
-        // pq 생성
-        PriorityQueue<Integer> pq=new PriorityQueue<>((o1,o2)->Integer.compare(distance[o1],distance[o2]));
-        pq.add(0); 
+        @Override
+        public int compareTo(Node node) {
+            return this.dist-node.dist;
+        }
+    }
+    
+    static ArrayList<Node>[] graph;
+    static boolean[] isVisited;
+    static int[] distance; // 각 점의 최단거리 저장 
+    
+    public int solution(int N, int[][] road, int K) {
+        int answer=0;
         
-        int pop;
-        int[] temp;
-        boolean[] visited=new boolean[N];
-        while(!pq.isEmpty()){
+        graph=new ArrayList[N+1];
+        isVisited = new boolean[N+1];
+        distance=new int[N+1];
+        Arrays.fill(distance,Integer.MAX_VALUE);
+        Arrays.fill(isVisited,false);
+        
+        for(int i=1;i<=N;i++) {
+            graph[i]=new ArrayList<>();
+        }
+        
+        int a,b,c;
+        for(int i=0;i<road.length;i++) {
+            a=road[i][0];
+            b=road[i][1];
+            c=road[i][2];
+            
+            graph[a].add(new Node(b,c));
+            graph[b].add(new Node(a,c));
+        }
+        
+        dijkstra();
+        
+        for(int i=1;i<=N;i++) {
+            if(distance[i]<=K) answer++;
+        }
+        
+        return answer;
+    }
+    
+    static void dijkstra() {
+        
+        PriorityQueue<Node> pq=new PriorityQueue<>();
+        pq.add(new Node(1,0)); 
+        isVisited[1]=true;
+        distance[1]=0; 
+        
+        int curr, currDist; 
+        Node pop;
+        Node next;
+        
+        while(!pq.isEmpty()) {
             pop=pq.poll();
+            curr=pop.n;   // 현재 위치 
+            currDist=pop.dist;    
             
-            if(visited[pop]) continue;
-            visited[pop]=true;
-            
-            
-            for(int i=0;i<graph[pop].size();i++){
-                temp=graph[pop].get(i); // 도착지, 거리 담겨있음 
-                
-                
-                if(distance[temp[0]] > temp[1]+distance[pop]){
-                    distance[temp[0]]= temp[1]+distance[pop]; 
-                    pq.add(temp[0]);
+            for(int i=0;i<graph[curr].size();i++) {
+                next=graph[curr].get(i);
+                if(distance[next.n] > currDist+ next.dist) {   // 최단거리 갱신 
+                    distance[next.n] = currDist+next.dist; 
+                    pq.add(new Node(next.n,distance[next.n]));
                 }
-                
+                if(!isVisited[next.n]) {
+                    isVisited[next.n]=true; 
+                }
             }
         }
         
-        for(int i=0;i<N;i++){
-            if(distance[i]<=K) answer++;
-        }
-
-        return answer;
     }
 }
