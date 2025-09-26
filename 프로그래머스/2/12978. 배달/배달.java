@@ -75,10 +75,10 @@ class Solution {
                     distance[next.n] = currDist+next.dist; 
                     pq.add(new Node(next.n,distance[next.n]));
                 }
-                if(!isVisited[next.n]) {
+             /*   if(!isVisited[next.n]) {
                     isVisited[next.n]=true; 
-                }
-            }
+                } */
+             }
         }
         
     }
